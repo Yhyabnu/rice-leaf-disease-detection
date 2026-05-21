@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Deteksi Penyakit Daun Padi</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <!-- Header dengan Animasi -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon floating">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h1 class="glow-text">Deteksi Penyakit Daun Padi</h1>
+            </div>
+            <p class="tagline">Deteksi Cerdas • Hasil Akurat • Solusi Tepat</p>
+            <div class="stats-badge">
+                <span><i class="fas fa-chart-line"></i> 11 Kelas Penyakit</span>
+                <span><i class="fas fa-brain"></i> Deep Learning</span>
+                <span><i class="fas fa-leaf"></i> Akurasi Tinggi</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Upload Section with 3D Effect -->
+            <div class="upload-card glass-effect">
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon pulse-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Upload Gambar Daun Padi</h3>
+                        <p>klik untuk memilih gambar</p>
+                        <div class="format-badge">
+                            <span><i class="far fa-image"></i> JPG</span>
+                            <span><i class="far fa-image"></i> PNG</span>
+                            <span><i class="far fa-image"></i> WEBP</span>
+                        </div>
+                        <button class="btn-primary" id="uploadBtn">
+                            <i class="fas fa-plus-circle"></i> Pilih Gambar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Preview dengan Animasi -->
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <div class="preview-header">
+                        <h3><i class="fas fa-image"></i> Preview Gambar</h3>
+                        <button class="btn-remove" id="removeImageBtn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="image-wrapper">
+                        <img id="imagePreview" alt="Preview gambar daun padi">
+                        <div class="image-overlay">
+                            <span><i class="fas fa-search-plus"></i> Klik untuk zoom</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Animation yang Keren -->
+            <div class="loading-container" id="loadingContainer" style="display: none;">
+                <div class="loader-wrapper">
+                    <div class="loader"></div>
+                    <div class="loader-text">
+                        <span class="dot">.</span>
+                        <span class="dot">.</span>
+                        <span class="dot">.</span>
+                    </div>
+                </div>
+                <div class="loading-steps">
+                    <div class="step" id="step1">
+                        <i class="fas fa-microchip"></i>
+                        <span>Memproses gambar</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analisis fitur</span>
+                    </div>
+                    <div class="step" id="step3">
+                        <i class="fas fa-robot"></i>
+                        <span>Prediksi penyakit</span>
+                    </div>
+                </div>
+                <div class="progress-steps">
+                    <div class="progress-step" id="progressStep1"></div>
+                    <div class="progress-step" id="progressStep2"></div>
+                    <div class="progress-step" id="progressStep3"></div>
+                </div>
+            </div>
+
+            <!-- Result Section dengan Tab Interface -->
+            <div class="result-card glass-effect" id="resultCard" style="display: none;">
+                <!-- Tab Navigation -->
+                <div class="result-tabs">
+                    <button class="tab-btn active" data-tab="diagnosis">
+                        <i class="fas fa-stethoscope"></i> Diagnosis
+                    </button>
+                    <button class="tab-btn" data-tab="details">
+                        <i class="fas fa-info-circle"></i> Detail
+                    </button>
+                    <button class="tab-btn" data-tab="probabilities">
+                        <i class="fas fa-chart-bar"></i> Probabilitas
+                    </button>
+                    <button class="tab-btn" data-tab="solution">
+                        <i class="fas fa-syringe"></i> Solusi
+                    </button>
+                </div>
+
+                <!-- Tab Content: Diagnosis -->
+                <div class="tab-content active" id="diagnosis-tab">
+                    <div class="result-header">
+                        <div class="result-icon" id="resultIcon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <div class="result-title">
+                            <span class="badge-new">
+                                <i class="fas fa-magic"></i> Hasil Deteksi
+                            </span>
+                            <h2 id="diagnosisResult">-</h2>
+                        </div>
+                    </div>
+                    <div class="confidence-meter">
+                        <div class="confidence-header">
+                            <span><i class="fas fa-chart-simple"></i> Tingkat Keyakinan</span>
+                            <span class="confidence-percent" id="confidencePercent">0%</span>
+                        </div>
+                        <div class="meter">
+                            <div class="meter-fill" id="meterFill"></div>
+                            <div class="meter-glow"></div>
+                        </div>
+                        <div class="confidence-level" id="confidenceLevel"></div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Detail Penyakit -->
+                <div class="tab-content" id="details-tab">
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-disease"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4><i class="fas fa-clipboard-list"></i> Deskripsi Penyakit</h4>
+                            <p id="diseaseDescription">-</p>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4><i class="fas fa-tachometer-alt"></i> Ciri-ciri </h4>
+                            <ul id="symptomsList">
+                                <li>-</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Probabilitas -->
+                <div class="tab-content" id="probabilities-tab">
+                    <div class="probabilities-header">
+                        <h3><i class="fas fa-chart-pie"></i> Distribusi Probabilitas</h3>
+                        <p>Probabilitas untuk setiap kelas penyakit</p>
+                    </div>
+                    <div class="probabilities-list" id="probabilitiesList">
+                        <!-- Dinamis dari JS -->
+                    </div>
+                </div>
+
+                <!-- Tab Content: Solusi -->
+                <div class="tab-content" id="solution-tab">
+                    <div class="solution-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Rekomendasi Penanganan</h3>
+                    </div>
+                    <div class="solution-steps" id="solutionSteps">
+                        <!-- Dinamis dari JS -->
+                    </div>
+                    <div class="solution-tips">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Tips: Lakukan pengecekan rutin setiap 5-7 hari untuk pencegahan dini</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="resetBtn">
+                        <i class="fas fa-redo-alt"></i> Deteksi Ulang
+                    </button>
+                    <button class="btn-primary-outline" id="downloadReportBtn">
+                        <i class="fas fa-download"></i> Unduh Laporan
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- DROPDOWN ACCORDION SECTION (DATABASE, PANDUAN, TENTANG AI) -->
+            <!-- ============================================ -->
+            <div class="info-accordion">
+                <!-- Accordion 1: Database Penyakit -->
+                <div class="accordion-card" id="accordionDatabase">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="accordion-title">
+                            <h4>Database Penyakit Daun Padi</h4>
+                            <p>Informasi lengkap 11 jenis penyakit dan gejala</p>
+                        </div>
+                        <div class="accordion-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="disease-grid" id="diseaseGrid">
+                            <!-- Isi dinamis via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion 2: Panduan Penggunaan -->
+                <div class="accordion-card" id="accordionGuide">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="accordion-title">
+                            <h4>Panduan Penggunaan</h4>
+                            <p>Cara upload gambar & interpretasi hasil</p>
+                        </div>
+                        <div class="accordion-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="guide-steps">
+                            <div class="guide-step">
+                                <div class="guide-number">1</div>
+                                <div class="guide-text">
+                                    <strong>Upload Gambar</strong>
+                                    <p>Klik area upload atau drag & drop gambar daun padi yang ingin dideteksi. Format yang didukung: JPG, PNG, WEBP (Max 16MB)</p>
+                                </div>
+                            </div>
+                            <div class="guide-step">
+                                <div class="guide-number">2</div>
+                                <div class="guide-text">
+                                    <strong>Tunggu Proses</strong>
+                                    <p>Sistem akan memproses gambar menggunakan teknologi Deep Learning. Proses hanya membutuhkan beberapa detik.</p>
+                                </div>
+                            </div>
+                            <div class="guide-step">
+                                <div class="guide-number">3</div>
+                                <div class="guide-text">
+                                    <strong>Lihat Hasil</strong>
+                                    <p>Hasil deteksi akan menampilkan jenis penyakit, tingkat akurasi, dan rekomendasi penanganan yang tepat.</p>
+                                </div>
+                            </div>
+                            <div class="guide-step">
+                                <div class="guide-number">4</div>
+                                <div class="guide-text">
+                                    <strong>Tindak Lanjut</strong>
+                                    <p>Gunakan rekomendasi solusi untuk menangani penyakit pada tanaman padi Anda. Pastikan untuk Konsultasi dengan ahli terlebih dahulu.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion 3: Tentang AI -->
+                <div class="accordion-card" id="accordionAbout">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="accordion-title">
+                            <h4>Tentang Sistem</h4>
+                            <p>Teknologi Deep Learning untuk deteksi penyakit</p>
+                        </div>
+                        <div class="accordion-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="about-ai-content">
+                            <div class="about-icon-large">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h4>Sistem Deteksi Penyakit Daun Padi</h4>
+                            <p>Sistem cerdas yang menggunakan teknologi Deep Learning untuk mendeteksi penyakit pada daun padi secara akurat dan cepat.</p>
+                            
+                            <div class="ai-stats">
+                                <div class="stat">
+                                    <span class="stat-number">11</span>
+                                    <span class="stat-label">Kelas Penyakit</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number">93%</span>
+                                    <span class="stat-label">Akurasi</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number">&lt;5s</span>
+                                    <span class="stat-label">Waktu Deteksi</span>
+                                </div>
+                            </div>
+                            
+                            <h5>Teknologi yang Digunakan:</h5>
+                            <ul class="tech-list">
+                                <li><i class="fab fa-python"></i> Python & Flask</li>
+                                <li><i class="fas fa-brain"></i> TensorFlow / Keras</li>
+                                <li><i class="fab fa-html5"></i> HTML & CSS</li>
+                                <li><i class="fab fa-js"></i> JavaScript</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Success!</span>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <i class="fas fa-code"></i>
+                    <span>Powered CNN</span>
+                </div>
+                <div class="footer-section">
+                    <i class="far fa-copyright"></i>
+                    <span>2026 Sistem Deteksi Penyakit Daun Padi</span>
+                </div>
+                <div class="footer-section">
+                    <i class="fas fa-leaf"></i>
+                    <span>Solusi Modern untuk Petani</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
